@@ -1,4 +1,5 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
+MAINTAINER Jason L Weirather
 RUN apt-get update && apt-get install -y \
 	autoconf \
 	automake \
@@ -26,19 +27,20 @@ RUN cpanm CPAN::Meta \
 	DBD::SQLite \
 	Set::IntervalTree \
 	LWP \
-	LWP::Simple \
-	Archive::Extract \
+	LWP::Simple 
+RUN cpanm Archive::Extract \
 	Archive::Tar \
 	Archive::Zip \
 	CGI \
 	Time::HiRes \
-	Encode \
-	File::Copy::Recursive \
+	Encode 
+RUN cpanm --force File::Copy::Recursive
+RUN cpanm \
 	Perl::OSType \
 	Module::Metadata version \
 	Bio::Root::Version \
-	TAP::Harness \
-	Module::Build
+        TAP::Harness \
+        Module::Build
 
 WORKDIR /opt
 RUN wget https://github.com/samtools/samtools/releases/download/1.3/samtools-1.3.tar.bz2
@@ -50,18 +52,9 @@ RUN make install
 WORKDIR /opt
 RUN rm samtools-1.3.tar.bz2
 
-RUN wget https://github.com/Ensembl/ensembl-tools/archive/release/85.zip
-RUN mkdir variant_effect_predictor_85
-RUN mkdir variant_effect_predictor_85/cache
-RUN unzip 85.zip -d variant_effect_predictor_85
-RUN rm 85.zip 
-WORKDIR /opt/variant_effect_predictor_85/ensembl-tools-release-85/scripts/variant_effect_predictor/
-RUN perl INSTALL.pl --AUTO ap --PLUGINS LoF --CACHEDIR /opt/variant_effect_predictor_85/cache
-WORKDIR /opt/variant_effect_predictor_85/cache/Plugins
-RUN wget https://raw.githubusercontent.com/konradjk/loftee/v0.3-beta/splice_module.pl
-
 WORKDIR /opt
-ADD . /opt/vcf2maf 
+RUN wget https://github.com/jason-weirather/vcf2maf/archive/v1.6.16.tar.gz && \
+    tar -xzf v1.6.16.tar.gz && \
+    rm v1.6.16.tar.gz && \
+    mv vcf2maf-1.6.16 vcf2maf
 
-COPY Dockerfile /opt/
-MAINTAINER Michele Mattioni, Seven Bridges, <michele.mattioni@sbgenomics.com>

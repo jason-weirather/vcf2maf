@@ -1,3 +1,5 @@
+*** The purpose of this fork is a modification of the Dockerfile to facilitate post-VEP vcf2maf conversion and stable versioning of the vcf2maf Docker***
+
 vcf<img src="http://i.giphy.com/R6X7GehJWQYms.gif" width="30">maf
 =======
 
